@@ -53,7 +53,9 @@ const ExcalidrawFabric = ({
     setispagesZooming,
     setisPagesZoomingFromGesture,
     ispagesZooming,
+    scrollPdf
   } = useSettings();
+const [ispointerMoving, setispointerMoving] = useState(false)
 
   const initialAppState: AppState = {
     zoom: { value: zoom },
@@ -125,15 +127,16 @@ const ExcalidrawFabric = ({
         },
       });
 
-
       setisHeadderVisible(true);
       setispagesZooming(true);
       // setZoom((prev:number)=> prev+0.1)
+      setScrollPdf(true)
       setTimeout(() => {
         setispagesZooming(false);
         // setZoom((prev:number) => prev-0.1)
+        setScrollPdf(false)
         setisPagesZoomingFromGesture(false);
-      }, 800);
+      }, 100);
     }
   };
 
@@ -173,29 +176,31 @@ const ExcalidrawFabric = ({
 
   let isUndoing = false; // Flag to prevent multiple undo actions
 
+  // Handle undo action
+  const undo = () => {
+    const excalidrawEle = document.getElementById(
+      `excalidraw-page-${currentPage}`
+    );
+    console.log(excalidrawEle);
+    const undoButton = excalidrawEle.querySelector('[aria-label="Undo"]');
+    if (undoButton) {
+      undoButton?.click();
+      console.log("clicking....");
+    }
+  };
 
-   // Handle undo action
- const undo = () => {
-  const excalidrawEle = document.getElementById(`excalidraw-page-${currentPage}`)
-  console.log(excalidrawEle)
-  const undoButton = excalidrawEle.querySelector('[aria-label="Undo"]');
-  if(undoButton){
-    undoButton?.click()
-    console.log("clicking....")
-  }
-};
-
-// Handle redo action
-const redo = () => {
-  const excalidrawEle = document.getElementById(`excalidraw-page-${currentPage}`)
-  const undoButton = excalidrawEle.querySelector('[aria-label="Redo"]');
-  console.log(undoButton)
-  if(undoButton){
-    undoButton?.click()
-    console.log("clicking....")
-  }
-};
-
+  // Handle redo action
+  const redo = () => {
+    const excalidrawEle = document.getElementById(
+      `excalidraw-page-${currentPage}`
+    );
+    const undoButton = excalidrawEle.querySelector('[aria-label="Redo"]');
+    console.log(undoButton);
+    if (undoButton) {
+      undoButton?.click();
+      console.log("clicking....");
+    }
+  };
 
   const switchTool = (selectedTool: ActiveTool["type"]) => {
     if (!excalidrawAPI) return;
@@ -313,19 +318,19 @@ const redo = () => {
         break;
 
       case "undo":
-         console.log(currentPage===pageIndex)
-         if(currentPage!=pageIndex) return
-          resetToolProperties();
-          undo();
-          setActiveTool(null);
-          break;
+        console.log(currentPage === pageIndex);
+        if (currentPage != pageIndex) return;
+        resetToolProperties();
+        undo();
+        setActiveTool(null);
+        break;
       case "redo":
-        console.log(currentPage===pageIndex)
-        if(currentPage!=pageIndex) return
-          resetToolProperties();
-          redo();
-          setActiveTool(null);
-          break;
+        console.log(currentPage === pageIndex);
+        if (currentPage != pageIndex) return;
+        resetToolProperties();
+        redo();
+        setActiveTool(null);
+        break;
 
       default:
         resetToolProperties();
@@ -345,7 +350,8 @@ const redo = () => {
     activeTool?.fillColor,
     activeTool?.strokeColor,
     activeTool?.strokeWidth,
-    currentPage
+    currentPage,
+    pageIndex,
   ]);
 
   let imageBounds;
@@ -434,6 +440,8 @@ const redo = () => {
     pointersMap: Gesture["pointers"];
   }) => {
     save();
+    if (!activeTool?.id) return;
+    switchTool(activeTool.id);
     if (!(activeTool?.id === "rectangleSelection")) return;
 
     excalidrawAPI?.updateScene({ appState: { zoom: { value: 1 } } });
@@ -499,7 +507,7 @@ const redo = () => {
   return (
     <div
       className="w-full h-full"
-      // style={{ pointerEvents: ispagesZooming ? "none" : "auto" }}
+      style={{ pointerEvents: scrollPdf ? "none" : "auto" }}
     >
       <Excalidraw
         onPointerDown={(e) => {}}

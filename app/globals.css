@@ -578,3 +578,6 @@ img {
   image-rendering: crisp-edges;
 }
 
+body{
+  user-select: none;
+}

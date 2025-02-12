@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Document, Page, pdfjs } from "react-pdf";
@@ -9,11 +8,11 @@ import ExcalidrawFabric from "@/components/canvas/excalidraw/test/ExcalidrawFabr
 import { getPdfById } from "@/db/pdf/docs";
 import { useSettings } from "@/context/SettingsContext";
 import { Slider } from "../ui/slider";
-import { ThumbnailDiv } from "./ThumbnailDiv";
 import { debounce } from "lodash";
-import PDFPageContainer from "./PDFPageContainer";
+import { List } from "react-virtualized";
 import { TwoFingerScroll } from "@/components/pdfcomponents/TwoFingerScroll";
-import { TouchGestureHandler } from "./TouchGestureHandler";
+import PDFPageContainer from "./PDFPageContainer";
+
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@4.8.69/build/pdf.worker.min.mjs`;
 
@@ -31,7 +30,6 @@ const ErrorComponent = ({ message }) => (
 const ViewMode = {
   SINGLE: "single",
   DOUBLE: "double",
-  CAROUSEL: "carousel",
 };
 
 const PDFViewer = ({ url }) => {
@@ -39,180 +37,137 @@ const PDFViewer = ({ url }) => {
   const [zoom, setZoom] = useState(1);
   const [localZoom, setLocalZoom] = useState(1);
   const [fitToWidth, setFitToWidth] = useState(true);
+  const [pageHeight, setPageHeight] = useState(900);
+  const [pageWidth, setPageWidth] = useState();
+  const [scrollTop, setScrollTop] = useState(0);
 
-  const {
-    viewMode,
-    currentPage,
-    setCurrentPage,
-    isExpanded,
-    setisExpanded,
-    setScale,
-    setPages,
-    setcurrentView,
-  } = useSettings();
-  const [zoomOrigin, setZoomOrigin] = useState({ x: "50%", y: "50%" });
-  const containerRef = useRef(null);
+  const { viewMode, setScale, setPages, setcurrentView, isExpanded, setisExpanded, setCurrentPage } = useSettings();
+  const listRef = useRef(null);
 
   useEffect(() => {
-    // Auto fit when switching to double-page mode
-    if (viewMode === "double") {
-      setFitToWidth(true);
-    }
-  }, [viewMode]);
+    setcurrentView("read");
+  }, []);
 
-
-  useEffect(() => {
-    const savedPage = localStorage.getItem("lastViewedPage")||1;
-    if (savedPage) {
-      setCurrentPage(Number(savedPage));
-      setTimeout(() => {
-        const element = document.querySelector(`[data-page-number="${savedPage}"]`);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth",block: 'center' });
-        }
-      }, 500);
+  const onLoadPageSuccess = useCallback((page) => {
+    if (page?.originalHeight) {
+      setPageHeight(page.originalHeight);
+      setPageWidth(page.originalWidth);
     }
   }, []);
 
-  const handlePageChange = useCallback(
-    debounce((pageNumber) => {
-      setCurrentPage(pageNumber);
-      localStorage.setItem("lastViewedPage", pageNumber);
-    }, 500),
-    []
-  );
+  const renderRow = useCallback(
+    ({ index, key, style }) => {
+      const pageNumber1 = index * 2 + 1;
+      const pageNumber2 = index * 2 + 2;
 
-
-  const toggleExpand = () => {
-    setisExpanded((prev) => !prev);
-    if (!isExpanded) {
-      setFitToWidth(true);
-    }
-  };
-
-  const renderSinglePage = () => (
-    <div className="flex flex-col gap-4 items-center">
-      {Array.from({ length: numPages }, (_, index) => (
-        <PDFPageContainer
-          key={index + 1}
-          pageNumber={index + 1}
-          isVisible={index + 1 === currentPage}
-          zoom={zoom}
-          setZoom={setZoom}
-          pageWidth={window.innerWidth}
-          viewMode={viewMode}
-          fitToWidth={fitToWidth}
-          setFitToWidth={setFitToWidth}
-          isExpanded={isExpanded}
-          onPageInView={handlePageChange}
-        />
-      ))}
-    </div>
-  );
-
-  const renderDoublePage = () => (
-    <div className="flex flex-col gap-4">
-      {Array.from({ length: Math.ceil(numPages / 2) }, (_, index) => (
-        <div key={`spread-${index}`} className="flex gap-4 justify-center">
-          <PDFPageContainer
-            key={index * 2 + 1}
-            pageNumber={index * 2 + 1}
-            isVisible={index * 2 + 1 === currentPage}
-            zoom={zoom}
-            setZoom={setZoom}
-            pageWidth={window.innerWidth / 2}
-            viewMode={viewMode}
-            fitToWidth={true} // Always fit to width for double-page view
-            setFitToWidth={setFitToWidth}
-            isExpanded={isExpanded}
-            onPageInView={handlePageChange}
-          />
-          {index * 2 + 2 <= numPages && (
+      return (
+        <div
+          key={key}
+          style={{ height: style.height, top: style.top }}
+          className={`flex justify-center items-center w-[100%] absolute`}
+        >
+          {viewMode === ViewMode.DOUBLE ? (
+            <>
+              {pageNumber1 <= numPages && (
+                <PDFPageContainer
+                  key={`page-${pageNumber1}`}
+                  pageNumber={pageNumber1}
+                  zoom={zoom}
+                  setZoom={setZoom}
+                  onLoadSuccess={onLoadPageSuccess}
+                />
+              )}
+              {pageNumber2 <= numPages && (
+                <PDFPageContainer
+                  key={`page-${pageNumber2}`}
+                  pageNumber={pageNumber2}
+                  zoom={zoom}
+                  setZoom={setZoom}
+                  onLoadSuccess={onLoadPageSuccess}
+                />
+              )}
+            </>
+          ) : (
             <PDFPageContainer
-              key={index * 2 + 2}
-              pageNumber={index * 2 + 2}
-              isVisible={index * 2 + 2 === currentPage}
+              key={`page-${pageNumber1}`}
+              pageNumber={pageNumber1}
               zoom={zoom}
               setZoom={setZoom}
-              pageWidth={window.innerWidth / 2}
-              viewMode={viewMode}
-              fitToWidth={true}
-              setFitToWidth={setFitToWidth}
-              isExpanded={isExpanded}
-              onPageInView={handlePageChange}
+              onLoadSuccess={onLoadPageSuccess}
             />
           )}
         </div>
-      ))}
-    </div>
+      );
+    },
+    [viewMode, zoom, numPages, onLoadPageSuccess]
   );
 
   const debouncedSetZoom = useCallback(
     debounce((value) => {
       setZoom(value);
       setScale(value);
-      // setLocalZoom(1)
-    }, 0),
+    }, 100),
     []
   );
-  useEffect(() => {
-    if (containerRef.current) {
-      const containerWidth = containerRef.current.offsetWidth;
-      const scaledWidth = containerWidth * localZoom;
-  
-      console.log("Current Width:", containerWidth);
-      console.log("Scaled Width:", scaledWidth);
-    }
-  }, [localZoom]);
-  
+
+  const handlePageChange = useCallback(
+    ({ scrollTop }) => {
+      setScrollTop(scrollTop);
+      localStorage.setItem("scrollTop", scrollTop);
+    },
+    []
+  );
 
   useEffect(() => {
-    setcurrentView("read");
+    const savedScrollTop = localStorage.getItem("scrollTop");
+    if (savedScrollTop) {
+      setScrollTop(Number(savedScrollTop));
+    }
   }, []);
+
+  useEffect(() => {
+    if (pageWidth && isExpanded) {
+      const scale = window.innerWidth / pageWidth;
+      const scaleVal = viewMode === ViewMode.DOUBLE ? scale / 2 : scale;
+      setZoom(scaleVal);
+    } else if (pageWidth && !isExpanded) {
+      const scale = window.innerWidth / pageWidth;
+      const scaleVal = viewMode === ViewMode.DOUBLE ? scale / 2 : scale;
+      setZoom(scaleVal / 2);
+    }
+  }, [pageWidth, isExpanded]);
+
+  useEffect(() => {
+    if (listRef.current) {
+      // Apply the saved scroll position after rendering
+      setTimeout(() => {
+        listRef.current.scrollToPosition(scrollTop);
+      }, 0);
+    }
+  }, [scrollTop]);
 
   const handleZoomChange = (value) => {
     setLocalZoom(value[0]);
     debouncedSetZoom(value[0]);
   };
 
-  const handleZoomChange1 = (zoom, event) => {
-    console.log(zoom);
-    setLocalZoom(zoom)
-    debouncedSetZoom(zoom);
-  };
-
-
-
   return (
-    <div className="flex h-full max-w-full  scrollbar-hidden">
+    <div className="flex h-full w-full overflow-hidden scrollbar-hidden">
       <div className="flex-1 flex flex-col">
-        <div className="fixed top-4 right-4 z-50 flex gap-2" style={{zIndex:100}} >
-          <button
-            onClick={toggleExpand}
-            className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300"
-          >
-            {isExpanded ? "Normal Width" : "Expand to Full Width"}
-          </button>
+        <div
+          className="fixed top-4 right-4 z-50 flex gap-2"
+          style={{ zIndex: 100 }}
+        >
           <Slider
             min={0.5}
             max={4}
             step={0.1}
-            value={[localZoom]}
+            value={[zoom]}
             onValueChange={handleZoomChange}
             className="w-40"
           />
         </div>
-        <div
-          ref={containerRef}
-          className="flex-1  p-4  overflow-auto scrollbar-hidden relative  "
-          id="scrollableElement"
-          // style={
-          //   {
-          //     // transform: `scale(${localZoom})`,
-          //     // transformOrigin: `${zoomOrigin.x} ${zoomOrigin.y}`,
-          //   }
-          // }
-        >
+        <div className="flex-1 overflow-hidden relative" id="scrollableElement">
           <TwoFingerScroll>
             <Document
               file={url}
@@ -223,23 +178,31 @@ const PDFViewer = ({ url }) => {
               loading={<Loading message="Loading PDF..." />}
               error={<ErrorComponent message="Failed to load PDF" />}
             >
-              <div>
-                {viewMode === "single"
-                  ? renderSinglePage()
-                  : renderDoublePage()}
-              </div>
+              {numPages && (
+                <List
+                  ref={listRef}
+                  width={window.innerWidth}
+                  height={window.innerHeight}
+                  rowCount={
+                    viewMode === ViewMode.DOUBLE
+                      ? Math.ceil(numPages / 2)
+                      : numPages
+                  }
+                  rowHeight={pageHeight * zoom + 20}
+                  rowRenderer={renderRow}
+                  overscanRowCount={0}
+                  onScroll={handlePageChange}
+                  scrollTop={scrollTop}
+                />
+              )}
             </Document>
           </TwoFingerScroll>
         </div>
-        {true && (
-            <div className="w-[100vw] h-[100vh] absolute top-0 left-0">
-              <TouchGestureHandler onZoomChange={handleZoomChange1} />
-            </div>
-          )}
       </div>
     </div>
   );
 };
+
 
 const PdfViewer = ({ id }) => {
   const [pdfData, setPdfData] = useState<string | null>(null);
@@ -248,8 +211,7 @@ const PdfViewer = ({ id }) => {
     try {
       const pdf = await getPdfById(id);
       if (pdf?.base64) {
-        const dataUrl = pdf.base64;
-        setPdfData(dataUrl);
+        setPdfData(pdf.base64);
       }
     } catch (error) {
       console.error("Error fetching PDF:", error);

@@ -453,7 +453,7 @@ const Toolbar = () => {
                 onMouseEnter={() => setHoveredTool(tool.id)}
                 onMouseLeave={() => setHoveredTool(null)}
                 onClick={() => {
-                  
+                  setActiveTool(null)
                   setSelectedTool(tool);
                   setActiveTool(tool);
                   if(tool.id ==="objectEraser") return
