@@ -29,7 +29,7 @@ export default function PdfViewerComponent({ isExpanded, id }: PdfViewerComponen
 
   return (
     <div
-    className={`transition-all  w-[100vw] flex justify-center  scrollbar-hidden overflow-auto duration-300 pt-10 ease-in-out 
+    className={`transition-all  w-full flex justify-center   overflow-hidden duration-300  ease-in-out 
       ${theme === 'Dark Brown' ? 'bg-[#413F3A]' :
       theme === 'Deep Red' ? 'bg-[#3E2C2D]' :
       theme === 'Midnight Blue' ? 'bg-[#3B454B]' :
@@ -43,14 +43,14 @@ export default function PdfViewerComponent({ isExpanded, id }: PdfViewerComponen
     >
       {/* Conditional rendering based on `first` state */}
       {!first && (
-        <div className="w-[100vw]  pt-10 overflow-hidden">
+        <div className="w-full overflow-hidden">
           <PdfViewer id={id}/>
         </div>
       )}
 
       {/* This is the PDF note component, rendered when `first` is true */}
       {first && (
-        <div className="w-[100vw] h-screen" >
+        <div className="w-[100vw] h-screen overflow-hidden" >
           <ExcalidrawComponent id={id} />
         </div>
       )}

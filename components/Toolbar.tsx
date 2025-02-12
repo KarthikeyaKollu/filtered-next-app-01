@@ -9,6 +9,8 @@ import {
   Circle,
   ArrowRight,
   Minus,
+  Grab,
+  Hand
 } from "lucide-react";
 import Image from "next/image";
 import pencil from "@/public/penciltool.svg";
@@ -420,7 +422,7 @@ const Toolbar = () => {
   };
 
   return (
-    <div className="fixed bottom-9 left-3/4 transform -translate-x-1/2  font-sans" style={{zIndex:10}}>
+    <div className="fixed bottom-9 left-1/2 transform -translate-x-1/2  font-sans" style={{zIndex:10}}>
       <div className="bg-[#F6F6F6] w-[532px] h-[87px] rounded-full overflow-hidden pl-6 flex gap-3 max-w-2xl mx-auto shadow-2xl">
         {/* Undo and Redo */}
         <div className="flex items-center gap-3">
@@ -560,6 +562,8 @@ const Toolbar = () => {
         >
           <Image src={menu} alt={""} className="w-[28px] h-[28px]" />
         </button>
+
+       
       </div>
 
       <Menu isOpen={moreMenuOpen} onClose={() => setMoreMenuOpen(false)} />

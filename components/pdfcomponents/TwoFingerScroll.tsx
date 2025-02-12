@@ -1,63 +1,73 @@
 'use client';
-import { useRef, useEffect } from "react";
+import { useRef, useState } from "react";
 
 export const TwoFingerScroll = ({ children }) => {
   const containerRef = useRef(null);
-  const lastTouchesRef = useRef(null);
+  const [touchStartY, setTouchStartY] = useState(null);
+  const [scrollStartPosition, setScrollStartPosition] = useState(null);
+  const [state, setState] = useState("");
+
+  const handleTouchStart = (event) => {
+    if (event.touches.length === 2) {
+      event.preventDefault();
+      
+      // Calculate the middle point between the two fingers
+      const touch1 = event.touches[0];
+      const touch2 = event.touches[1];
+      const midPointY = (touch1.clientY + touch2.clientY) / 2;
+      
+      setTouchStartY(midPointY);
+      setScrollStartPosition(containerRef.current?.scrollTop || 0);
+      setState("Two-finger touch started");
+    }
+  };
 
   const handleTouchMove = (event) => {
     if (event.touches.length === 2) {
-      event.preventDefault(); // Prevent native scrolling
-
+      event.preventDefault();
+      
       const container = containerRef.current;
-      if (!container) return;
+      if (!container || touchStartY === null || scrollStartPosition === null) return;
 
-      const newTouches = event.touches;
-      if (lastTouchesRef.current) {
-        const prevTouches = lastTouchesRef.current;
-        const deltaY =
-          (newTouches[0].clientY + newTouches[1].clientY) / 2 -
-          (prevTouches[0].clientY + prevTouches[1].clientY) / 2;
-        container.scrollTop -= deltaY;
-      }
-
-      lastTouchesRef.current = [newTouches[0], newTouches[1]];
+      // Calculate current middle point
+      const touch1 = event.touches[0];
+      const touch2 = event.touches[1];
+      const currentMidPointY = (touch1.clientY + touch2.clientY) / 2;
+      
+      // Calculate the distance moved
+      const deltaY = touchStartY - currentMidPointY;
+      
+      // Update scroll position
+      container.scrollTop = scrollStartPosition + deltaY;
+      
+      setState(`Scrolling: ${deltaY.toFixed(2)}px`);
     }
   };
 
-  const handleTouchEnd = (event) => {
-    if (event.touches.length < 2) {
-      lastTouchesRef.current = null;
-    }
+  const handleTouchEnd = () => {
+    setTouchStartY(null);
+    setScrollStartPosition(null);
+    setState("");
   };
-
-  const handleWheel = (event) => {
-    const container = containerRef.current;
-    if (!container) return;
-    container.scrollTop += event.deltaY;
-  };
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener("wheel", handleWheel, { passive: true });
-      return () => container.removeEventListener("wheel", handleWheel);
-    }
-  }, []);
 
   return (
     <div
       ref={containerRef}
-      className="scrollbar-hidden"
+      className="relative"
       style={{
-        overflow: "auto",
         height: "100%",
-        touchAction: "pan-y", // Allow vertical scrolling but prevent zoom
+        width: "100%",
+        overflow: "auto",
+        touchAction: "pan-y", // Allow horizontal scrolling but disable vertical
       }}
+      onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       {children}
+      <div className="fixed top-4 left-4 bg-black/50 text-white p-2 rounded">
+        {state}
+      </div>
     </div>
   );
 };

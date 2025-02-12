@@ -1,22 +1,23 @@
-"use client"
-import React, { useState } from 'react';
-import { 
-  Diamond, 
-  Triangle, 
-  Circle, 
-  Square, 
-  ArrowUpRight, 
+"use client";
+import React, { useState } from "react";
+import {
+  Diamond,
+  Triangle,
+  Circle,
+  Square,
+  ArrowUpRight,
   Minus,
-  MousePointer
- 
-} from 'lucide-react';
-import ShapeMenu from './ShapeMenu';
-import { useSettings } from '@/context/SettingsContext';
+  MousePointer,
+  Hand,
+  GrabIcon,
+} from "lucide-react";
+import ShapeMenu from "./ShapeMenu";
+import { useSettings } from "@/context/SettingsContext";
 
 const ShapeButton = ({ Icon, isSelected, onClick }) => (
   <button
     className={`w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 transition-colors ${
-      isSelected ? 'bg-gray-100' : ''
+      isSelected ? "bg-gray-100" : ""
     }`}
     onClick={onClick}
   >
@@ -26,34 +27,33 @@ const ShapeButton = ({ Icon, isSelected, onClick }) => (
 
 const ShapeSelector = () => {
   const [selectedShape, setSelectedShape] = useState(null);
-  const {activeTool, setActiveTool} = useSettings();
-
+  const { activeTool, setActiveTool,setScrollPdf,scrollPdf } = useSettings();
 
   const shapes = [
     {
-      id: 'rectangleSelection',
-      icon:   MousePointer
+      id: "rectangleSelection",
+      icon: MousePointer,
     },
     {
-      id: 'diamond',
-      icon: Diamond
+      id: "diamond",
+      icon: Diamond,
     },
     {
-      id: 'circle',
-      icon: Circle
+      id: "circle",
+      icon: Circle,
     },
     {
-      id: 'rectangle',
-      icon: Square
+      id: "rectangle",
+      icon: Square,
     },
     {
-      id: 'arrow',
-      icon: ArrowUpRight
+      id: "arrow",
+      icon: ArrowUpRight,
     },
     {
-      id: 'line',
-      icon: Minus
-    }
+      id: "line",
+      icon: Minus,
+    },
   ];
 
   return (
@@ -67,10 +67,20 @@ const ShapeSelector = () => {
             onClick={() => setActiveTool(shape)}
           />
         ))}
+        <ShapeButton
+          key={1}
+          Icon={Hand}
+          isSelected={true}
+          onClick={() => {setScrollPdf(!scrollPdf)}}
+        />
       </div>
-      { <div className='absolute -top-10'><ShapeMenu/></div> }
+      {
+        <div className="absolute -top-10">
+          <ShapeMenu />
+        </div>
+      }
       {/* Pointer */}
-      <div className="absolute w-3 h-3 bg-white rotate-45 -bottom-1.5 right-16 "/>
+      <div className="absolute w-3 h-3 bg-white rotate-45 -bottom-1.5 right-16 " />
     </div>
   );
 };

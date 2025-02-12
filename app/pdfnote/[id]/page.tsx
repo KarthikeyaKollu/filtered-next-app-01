@@ -22,12 +22,12 @@ export default function page() {
   const {data} = useSettings()
   return (
 
-    <div className="max-h-screen w-[100vw] overflow-hidden max-w-[1920px]">
+    <div className="h-full w-full overflow-hidden">
 
-      <div className="flex flex-col items-center pb-8  scrollbar-hide overflow-hidden" >
+      <div className="flex flex-col items-center pb-8   overflow-hidden" >
         <PdfViewerComponent isExpanded={isExpanded} id={id} />
 
-        { data && <div className="fixed inset-0  w-full h-full bg-transparent" style={{zIndex:50}}>
+        { data && <div className="fixed inset-0  overflow-hidden w-full h-full bg-transparent" style={{zIndex:50}}>
           <ExcalidrawComponent id={id} />
         </div> }
 

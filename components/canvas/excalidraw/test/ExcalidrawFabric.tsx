@@ -206,7 +206,6 @@ const [ispointerMoving, setispointerMoving] = useState(false)
     if (!excalidrawAPI) return;
 
     console.log("Switching tool:", selectedTool);
-
     // Reset tool properties
     const resetToolProperties = () => {
       excalidrawAPI.updateScene({
@@ -337,6 +336,10 @@ const [ispointerMoving, setispointerMoving] = useState(false)
         excalidrawAPI.setActiveTool({ type: "selection" });
     }
   };
+
+useEffect(()=>{
+  console.log("scrolling")
+},[pageIndex,scrollPdf])
 
   useEffect(() => {
     if (!activeTool?.id) return;

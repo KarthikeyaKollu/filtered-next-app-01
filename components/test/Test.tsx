@@ -13,7 +13,6 @@ import { List } from "react-virtualized";
 import { TwoFingerScroll } from "@/components/pdfcomponents/TwoFingerScroll";
 import PDFPageContainer from "./PDFPageContainer";
 
-
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@4.8.69/build/pdf.worker.min.mjs`;
 
 const Loading = ({ message }) => (
@@ -41,7 +40,15 @@ const PDFViewer = ({ url }) => {
   const [pageWidth, setPageWidth] = useState();
   const [scrollTop, setScrollTop] = useState(0);
 
-  const { viewMode, setScale, setPages, setcurrentView, isExpanded, setisExpanded, setCurrentPage } = useSettings();
+  const {
+    viewMode,
+    setScale,
+    setPages,
+    setcurrentView,
+    isExpanded,
+    setisExpanded,
+    setCurrentPage,
+  } = useSettings();
   const listRef = useRef(null);
 
   useEffect(() => {
@@ -106,23 +113,13 @@ const PDFViewer = ({ url }) => {
     debounce((value) => {
       setZoom(value);
       setScale(value);
-    }, 100),
+    }, 200),
     []
   );
 
-  const handlePageChange = useCallback(
-    ({ scrollTop }) => {
-      setScrollTop(scrollTop);
-      localStorage.setItem("scrollTop", scrollTop);
-    },
-    []
-  );
-
-  useEffect(() => {
-    const savedScrollTop = localStorage.getItem("scrollTop");
-    if (savedScrollTop) {
-      setScrollTop(Number(savedScrollTop));
-    }
+  const handlePageChange = useCallback(({ scrollTop }) => {
+    setScrollTop(scrollTop);
+    localStorage.setItem("scrollTop", scrollTop);
   }, []);
 
   useEffect(() => {
@@ -135,16 +132,20 @@ const PDFViewer = ({ url }) => {
       const scaleVal = viewMode === ViewMode.DOUBLE ? scale / 2 : scale;
       setZoom(scaleVal / 2);
     }
-  }, [pageWidth, isExpanded]);
+  }, [pageWidth, isExpanded, viewMode]);
 
   useEffect(() => {
-    if (listRef.current) {
-      // Apply the saved scroll position after rendering
+    const savedPage = 1;
+    if (savedPage) {
       setTimeout(() => {
-        listRef.current.scrollToPosition(scrollTop);
-      }, 0);
+        const element = document.querySelector(`[data-page-number="1"]`);
+        console.log(element);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 100);
     }
-  }, [scrollTop]);
+  }, [numPages]);
 
   const handleZoomChange = (value) => {
     setLocalZoom(value[0]);
@@ -167,10 +168,15 @@ const PDFViewer = ({ url }) => {
             className="w-40"
           />
         </div>
-        <div className="flex-1 overflow-hidden relative" id="scrollableElement">
+        <div
+          className="flex-1 overflow-auto relative w-full items-center justify-center"
+          id="scrollableElement"
+          ref={listRef}
+        >
           <TwoFingerScroll>
             <Document
               file={url}
+              
               onLoadSuccess={(doc) => {
                 setNumPages(doc.numPages);
                 setPages(doc.numPages);
@@ -180,29 +186,33 @@ const PDFViewer = ({ url }) => {
             >
               {numPages && (
                 <List
-                  ref={listRef}
                   width={window.innerWidth}
                   height={window.innerHeight}
                   rowCount={
                     viewMode === ViewMode.DOUBLE
                       ? Math.ceil(numPages / 2)
-                      : numPages
+                      : numPages/2
                   }
                   rowHeight={pageHeight * zoom + 20}
                   rowRenderer={renderRow}
                   overscanRowCount={0}
                   onScroll={handlePageChange}
-                  scrollTop={scrollTop}
                 />
+                
               )}
             </Document>
+
+            {/* <div className="h-screen overflow-auto p-4">
+              {Array.from({ length: 100 }).map((_, index) => (
+                <div key={index} className="w-32 h-32 bg-black mb-4"></div>
+              ))}
+            </div> */}
           </TwoFingerScroll>
         </div>
       </div>
     </div>
   );
 };
-
 
 const PdfViewer = ({ id }) => {
   const [pdfData, setPdfData] = useState<string | null>(null);
@@ -223,7 +233,7 @@ const PdfViewer = ({ id }) => {
   }, []);
 
   return (
-    <div className="h-screen w-full overflow-hidden">
+    <div className="w-full h-full overflow-hidden">
       {pdfData && <PDFViewer url={pdfData} />}
     </div>
   );

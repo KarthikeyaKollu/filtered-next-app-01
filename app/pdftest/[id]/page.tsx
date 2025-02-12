@@ -183,7 +183,7 @@ const PDFViewer = ({ url }) => {
 
 
   return (
-    <div className="flex h-full max-w-full  scrollbar-hidden">
+    <div className="flex h-full max-w-full  scrollbar-hidden  ">
       <div className="flex-1 flex flex-col">
         {/* <div className="fixed top-4 right-4 z-50 flex gap-2">
           <button
@@ -203,7 +203,7 @@ const PDFViewer = ({ url }) => {
         </div> */}
         <div
           ref={containerRef}
-          className="flex-1  p-4  overflow-auto scrollbar-hidden relative  "
+          className="flex-1  p-4  overflow-auto scrollbar-hidden relative "
           id="scrollableElement"
           // style={
           //   {
@@ -222,7 +222,7 @@ const PDFViewer = ({ url }) => {
               loading={<Loading message="Loading PDF..." />}
               error={<ErrorComponent message="Failed to load PDF" />}
             >
-              <div>
+              <div className="">
                 {viewMode === "single"
                   ? renderSinglePage()
                   : renderDoublePage()}
