@@ -145,7 +145,7 @@ const PDFViewer = ({ url }) => {
         }
       }, 100);
     }
-  }, [numPages]);
+  }, [numPages,viewMode]);
 
   const handleZoomChange = (value) => {
     setLocalZoom(value[0]);
