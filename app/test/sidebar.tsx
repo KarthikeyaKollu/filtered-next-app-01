@@ -71,17 +71,15 @@ export default function Sidebar() {
   const [activeNav, setActiveNav] = useState("");
   const [activeView, setActiveView] = useState("");
   const [activeTool, setActiveTool] = useState("read");
-  const { setfirst, setViewMode,setisExpanded,isExpanded,currentView } = useSettings();
-  const router = useRouter()
+  const { setfirst, setViewMode, setisExpanded, isExpanded, currentView } =
+    useSettings();
+  const router = useRouter();
 
-
-
-useEffect(()=>{
-
+  useEffect(() => {
     // setActiveTool("write");
-console.log(currentView)
-setActiveTool(currentView)
-},[currentView])
+    console.log(currentView);
+    setActiveTool(currentView);
+  }, [currentView]);
 
   return (
     <div
@@ -93,25 +91,37 @@ setActiveTool(currentView)
         <div className="flex flex-col items-center gap-2.5">
           <NavButton
             active={activeNav === "home"}
-            onClick={() => {setActiveNav("home"); router.push('/dashboard') }}
+            onClick={() => {
+              setActiveNav("home");
+              router.push("/dashboard");
+            }}
             icon={home}
             label="Home"
           />
           <NavButton
             active={activeNav === "pdf"}
-            onClick={() => {setActiveNav("pdf");router.push('/dashboard/pdf')}}
+            onClick={() => {
+              setActiveNav("pdf");
+              router.push("/dashboard/pdf");
+            }}
             icon={pdfviewer}
             label="PDF Viewer"
           />
           <NavButton
             active={activeNav === "notes"}
-            onClick={() => {setActiveNav("notes"); router.push('/dashboard/notes')}}
+            onClick={() => {
+              setActiveNav("notes");
+              router.push("/dashboard/notes");
+            }}
             icon={notes}
             label="Notes"
           />
           <NavButton
             active={activeNav === "chat"}
-            onClick={() => {setActiveNav("chat");router.push('/chat')}}
+            onClick={() => {
+              setActiveNav("chat");
+              router.push("/chat");
+            }}
             icon={chat}
             label="Chat"
           />
@@ -148,7 +158,10 @@ setActiveTool(currentView)
         <div className="">
           <NavButton
             active={activeNav === "expand"}
-            onClick={() => {setActiveNav("expand"); setisExpanded(!isExpanded) }}
+            onClick={() => {
+              setActiveNav("expand");
+              setisExpanded(!isExpanded);
+            }}
             icon={expand}
             label="Expand"
           />
@@ -176,7 +189,7 @@ setActiveTool(currentView)
       </div>
 
       <div className="ml-5 mt-8">
-        <ToggleButton/>
+        <ToggleButton />
         {/* <PDFCounter /> */}
       </div>
     </div>

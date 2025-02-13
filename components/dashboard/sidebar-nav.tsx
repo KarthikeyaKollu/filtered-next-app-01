@@ -175,6 +175,7 @@ export function SidebarNav() {
   const handelOpenDocs = (route) => {
       // Relative path, navigate within the Next.js app
       router.push(route);
+      console.log(route)
 
   };
   
@@ -208,7 +209,7 @@ export function SidebarNav() {
             <motion.div key={file.id} custom={index} variants={itemVariants}>
               <div
                 className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer"
-                onClick={()=>{handelOpenDocs(`/${type === "pdf" ? "/pdfnote" : "/note"}/${file.id}`)}}
+                onClick={()=>{handelOpenDocs(`/${type === "pdf" ? "pdfnote" : "note"}/${file.id}`)}}
               >
                 <Image
                   className={`w-4 h-4`}

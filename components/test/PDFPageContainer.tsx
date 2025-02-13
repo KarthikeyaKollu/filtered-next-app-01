@@ -65,7 +65,7 @@ export const ExcalidrawOverlay = React.memo(
         <ExcalidrawFabric
           pageIndex={pageNumber}
           currentDocumentId={currentDocumentId}
-          zoom={zoom / 5}
+          zoom={zoom/3}
           setZoom={setZoom}
         />
       </Suspense>

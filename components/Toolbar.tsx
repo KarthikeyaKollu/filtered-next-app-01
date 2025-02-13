@@ -10,7 +10,7 @@ import {
   ArrowRight,
   Minus,
   Grab,
-  Hand
+  Hand,
 } from "lucide-react";
 import Image from "next/image";
 import pencil from "@/public/penciltool.svg";
@@ -45,7 +45,7 @@ interface MenuProps {
 
 const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
   const menuRef = useRef<HTMLDivElement>(null);
-  const {setActiveTool} = useSettings()
+  const { setActiveTool } = useSettings();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -107,13 +107,15 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
       <div className="px-4 py-2">
         <div className="text-sm text-gray-600 mb-2">Media</div>
         <div className="space-y-1">
-          <button className="w-full flex items-center p-2 hover:bg-[#553C9A] rounded-lg" onClick={()=>{
-            const tool ={
-              id: "image",
-            }
-            setActiveTool(tool)
-
-          }}>
+          <button
+            className="w-full flex items-center p-2 hover:bg-[#553C9A] rounded-lg"
+            onClick={() => {
+              const tool = {
+                id: "image",
+              };
+              setActiveTool(tool);
+            }}
+          >
             <Film className="w-5 h-5 mr-2 text-gray-700" />
             <span className="text-gray-700">Images</span>
           </button>
@@ -127,8 +129,8 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
       </div>
-       {/* Pointer */}
-       <div className="absolute w-3 h-3 bg-white rotate-45 -bottom-1.5 right-6 shadow-xl"/>
+      {/* Pointer */}
+      <div className="absolute w-3 h-3 bg-white rotate-45 -bottom-1.5 right-6 shadow-xl" />
     </div>
   );
 };
@@ -158,20 +160,21 @@ const ShapeSelectorMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
         fixed right-1 -top-20
         transform
         transition-all duration-200 ease-out
-        ${isOpen 
-          ? 'opacity-100 scale-100 translate-y-0' 
-          : 'opacity-0 scale-95 translate-y-8'
+        ${
+          isOpen
+            ? "opacity-100 scale-100 translate-y-0"
+            : "opacity-0 scale-95 translate-y-8"
         }
-        ${!isOpen && 'pointer-events-none'}
+        ${!isOpen && "pointer-events-none"}
       `}
       ref={menuRef}
     >
-      <div 
+      <div
         className={`
            rounded-xl shadow-lg z-50
           transform
           transition-transform duration-300 ease-out
-          ${isOpen ? 'translate-y-0' : 'translate-y-4'}
+          ${isOpen ? "translate-y-0" : "translate-y-4"}
         `}
       >
         <ShapeSelector />
@@ -205,20 +208,21 @@ const TextOptionsMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
         fixed left-24 -top-20
         transform
         transition-all duration-300 ease-out
-        ${isOpen 
-          ? 'opacity-100 scale-100 translate-y-0' 
-          : 'opacity-0 scale-95 translate-y-8'
+        ${
+          isOpen
+            ? "opacity-100 scale-100 translate-y-0"
+            : "opacity-0 scale-95 translate-y-8"
         }
-        ${!isOpen && 'pointer-events-none'}
+        ${!isOpen && "pointer-events-none"}
       `}
       ref={menuRef}
     >
-      <div 
+      <div
         className={`
            rounded-xl shadow-lg  z-50
           transform
           transition-transform duration-300 ease-out
-          ${isOpen ? 'translate-y-0' : 'translate-y-4'}
+          ${isOpen ? "translate-y-0" : "translate-y-4"}
         `}
       >
         <TextMenu />
@@ -226,8 +230,6 @@ const TextOptionsMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
     </div>
   );
 };
-
-
 
 const PenOptionsMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
   const menuRef = useRef<HTMLDivElement>(null);
@@ -254,20 +256,21 @@ const PenOptionsMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
         fixed left-24 -top-20
         transform
         transition-all duration-300 ease-out
-        ${isOpen 
-          ? 'opacity-100 scale-100 translate-y-0' 
-          : 'opacity-0 scale-95 translate-y-8'
+        ${
+          isOpen
+            ? "opacity-100 scale-100 translate-y-0"
+            : "opacity-0 scale-95 translate-y-8"
         }
-        ${!isOpen && 'pointer-events-none'}
+        ${!isOpen && "pointer-events-none"}
       `}
       ref={menuRef}
     >
-      <div 
+      <div
         className={`
            rounded-xl shadow-lg  z-50
           transform
           transition-transform duration-300 ease-out
-          ${isOpen ? 'translate-y-0' : 'translate-y-4'}
+          ${isOpen ? "translate-y-0" : "translate-y-4"}
         `}
       >
         <PenMenu />
@@ -276,7 +279,6 @@ const PenOptionsMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
   );
 };
 
-
 const Toolbar = () => {
   const [hoveredTool, setHoveredTool] = useState(null);
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
@@ -284,9 +286,10 @@ const Toolbar = () => {
   const [selectedTool, setSelectedTool] = useState(null);
   // const [selectedColor, setSelectedColor] = useState("#000");
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const { setActiveTool,selectedColor, setSelectedColor,activeTool } = useSettings();
+  const { setActiveTool, selectedColor, setSelectedColor, activeTool } =
+    useSettings();
   const [TextMenuOpen, setTextMenuOpen] = useState(false);
-  const [PenMenuOpen, setPenMenuOpen] = useState(false)
+  const [PenMenuOpen, setPenMenuOpen] = useState(false);
 
   // Update tool colors when selected color changes
   useEffect(() => {
@@ -324,55 +327,55 @@ const Toolbar = () => {
     {
       id: "highlighter",
       type: "pen",
-      icon: <Image src={marker} className="text-gray-600 h-[133px]" alt={""} />,
+      icon: <object data="/marker.svg" type="image/svg+xml" style={{ pointerEvents: 'none' }}/>,
       style: {
         background: "#fff",
         border: `2px solid ${selectedColor}`,
         borderRadius: "1px",
       },
       color: selectedColor,
-      strokeWidth:4,
-      opacity:50
+      strokeWidth: 4,
+      opacity: 50,
     },
     {
       id: "pencil",
       type: "pen",
-      icon: <Image src={pencil} className="text-gray-600 h-[133px]" alt={""} />,
+      icon: <object data="/penciltool.svg" type="image/svg+xml" style={{ pointerEvents: 'none' }}/>,
       style: {
         background: "#fff",
         border: `2px solid ${selectedColor}`,
         borderRadius: "1px",
       },
       color: selectedColor,
-      strokeWidth:2,
-      opacity:90
+      strokeWidth: 2,
+      opacity: 90,
     },
     {
       id: "pen",
       type: "pen",
-      icon: <Image src={pen} className="text-gray-600 h-[133px]" alt={""} />,
+      icon: <object data="/pen.svg" type="image/svg+xml" style={{ pointerEvents: 'none' }}/>,
       style: {
         background: "#fff",
         border: `2px solid ${selectedColor}`,
         borderRadius: "1px",
       },
       color: selectedColor,
-      strokeWidth:1,
-      opacity:100
+      strokeWidth: 1,
+      opacity: 100,
     },
     {
       id: "objectEraser",
       type: "pen",
-      icon: <Image src={eraser} className="text-gray-600 h-[133px]" alt={""} />,
+      icon: <object data="/erasertool.svg" type="image/svg+xml" style={{ pointerEvents: 'none' }}/>,
       style: {
         background: "#fff",
         border: `2px solid ${selectedColor}`,
         borderRadius: "1px",
       },
       color: selectedColor,
-      strokeWidth:1,
+      strokeWidth: 1,
     },
-    
+
     {
       id: "shapes",
       icon: <Image src={shapes} alt="" className="w-[29px] h-[29px]" />,
@@ -422,7 +425,10 @@ const Toolbar = () => {
   };
 
   return (
-    <div className="fixed bottom-9 left-1/2 transform -translate-x-1/2  font-sans" style={{zIndex:10}}>
+    <div
+      className="fixed bottom-9 left-1/2 transform -translate-x-1/2  font-sans"
+      style={{ zIndex: 10 }}
+    >
       <div className="bg-[#F6F6F6] w-[532px] h-[87px] rounded-full overflow-hidden pl-6 flex gap-3 max-w-2xl mx-auto shadow-2xl">
         {/* Undo and Redo */}
         <div className="flex items-center gap-3">
@@ -440,7 +446,7 @@ const Toolbar = () => {
         </div>
 
         {/* Markers */}
-        <div className="flex items-center -mb-16">
+        <div className="flex items-center -mb-12">
           {toolsByType.markers.map((tool) => (
             <div
               key={tool.id}
@@ -449,22 +455,29 @@ const Toolbar = () => {
                   ? "-translate-y-4"
                   : ""
               }`}
+              
             >
               <button
-                className="rounded-full pt-3"
+                className=""
                 onMouseEnter={() => setHoveredTool(tool.id)}
                 onMouseLeave={() => setHoveredTool(null)}
                 onClick={() => {
-                  setActiveTool(null)
+                  console.log("clicked");
+                  setActiveTool(null);
                   setSelectedTool(tool);
                   setActiveTool(tool);
-                  if(tool.id ==="objectEraser") return
                   
-                  setPenMenuOpen(true)
+                  if (tool.id === "objectEraser") return;
+
+                  setPenMenuOpen(true);
                 }}
+
+                
+                style={{ cursor: 'pointer' }}
               >
-                {renderTool(tool)}
-                {/* <object data="marker.svg" type="image/svg+xml" width="100" height="100"></object> */}
+                <div className="" style={{ width: 60, height: 100,cursor: 'pointer' }}>
+                  {renderTool(tool)}
+                </div>
 
                 {/* <img src={`marker.svg`} width="100" height="100" alt=""/> */}
               </button>
@@ -530,7 +543,6 @@ const Toolbar = () => {
           </div>
         </div>
 
-
         {/* Shapes and Text */}
         <div className="flex flex-col justify-center items-center gap-1.5">
           {toolsByType.shapesAndText.map((tool) => (
@@ -539,15 +551,13 @@ const Toolbar = () => {
               className="rounded-full hover:bg-gray-100 transition-colors pt-1 duration-200"
               onClick={() => {
                 setSelectedTool(tool);
-                if(tool.id==="shapes"){
+                if (tool.id === "shapes") {
                   setShapesMenuOpen(true);
+                } else {
+                  setTextMenuOpen(true);
 
-                }else{
-                  setTextMenuOpen(true)
-                  
                   setActiveTool(tool);
                 }
-               
               }}
             >
               {renderTool(tool)}
@@ -562,84 +572,24 @@ const Toolbar = () => {
         >
           <Image src={menu} alt={""} className="w-[28px] h-[28px]" />
         </button>
-
-       
       </div>
 
       <Menu isOpen={moreMenuOpen} onClose={() => setMoreMenuOpen(false)} />
-      <ShapeSelectorMenu isOpen={shapesMenuOpen} onClose={() => setShapesMenuOpen(false)} />
-      <TextOptionsMenu isOpen={TextMenuOpen} onClose={() => setTextMenuOpen(false)} />
-      <PenOptionsMenu isOpen={PenMenuOpen} onClose={() => setPenMenuOpen(false)} />
-      
+      <ShapeSelectorMenu
+        isOpen={shapesMenuOpen}
+        onClose={() => setShapesMenuOpen(false)}
+      />
+      <TextOptionsMenu
+        isOpen={TextMenuOpen}
+        onClose={() => setTextMenuOpen(false)}
+      />
+      <PenOptionsMenu
+        isOpen={PenMenuOpen}
+        onClose={() => setPenMenuOpen(false)}
+      />
     </div>
   );
 };
 
 export default Toolbar;
 
-
-
-
-
-// const ShapesMenu = () => {
-//   const { setActiveTool } = useSettings();
-//   const tools: Tool[] = [
-//     {
-//       id: 'rectangleSelection',
-//       icon: <MousePointer2 className="w-5 h-5" />,
-//       type: null,
-//       text: 'rectangleSelection'
-//     },
-//     {
-//       id: 'square',
-//       icon: <Square className="w-5 h-5" />,
-//       type: 'pen',
-//       color: '#000000',
-//       text: 'Square'
-//     },
-//     {
-//       id: 'diamond',
-//       icon: <Diamond className="w-5 h-5" />,
-//       type: 'pen',
-//       color: '#000000',
-//       text: 'Diamond'
-//     },
-//     {
-//       id: 'circle',
-//       icon: <Circle className="w-5 h-5" />,
-//       type: 'pen',
-//       color: '#000000',
-//       text: 'Circle'
-//     },
-//     {
-//       id: 'arrow',
-//       icon: <ArrowRight className="w-5 h-5" />,
-//       type: 'pen',
-//       color: '#000000',
-//       text: 'Arrow'
-//     },
-//     {
-//       id: 'line',
-//       icon: <Minus className="w-5 h-5" />,
-//       type: 'pen',
-//       color: '#000000',
-//       text: 'Line'
-//     }
-//   ];
-
-//   return (
-//     <div className="flex items-center gap-2 bg-white  rounded-lg">
-//       {tools.map((tool) => (
-//         <button
-//           key={tool.id}
-//           className={`p-2 hover:bg-gray-100 rounded-md transition-colors duration-200 flex items-center justify-center ${tool.className || ''}`}
-//           title={tool.text}
-//           style={tool.style}
-//           onClick={()=>{setActiveTool(tool)}}
-//         >
-//           {tool.icon}
-//         </button>
-//       ))}
-//     </div>
-//   );
-// };
